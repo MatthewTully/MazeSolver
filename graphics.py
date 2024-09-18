@@ -7,8 +7,6 @@ from tkinter import Canvas
 if TYPE_CHECKING:
     from window import Window
 
-
-
 class Point():
     """Point class."""
 
@@ -46,8 +44,9 @@ class Cell():
         self._y2 = y2
         self._win = win
         self._wall_colour = wall_colour
+        self._visited = False
+        self._maze_exit = False
 
-    
     def _determine_wall_colour(self, wall_exists: bool) -> str:
         """Checks if wall exists and returns Colour."""
         if wall_exists:

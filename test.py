@@ -26,8 +26,9 @@ class Tests(unittest.TestCase):
 
         num_col = 0
         num_row = 0
-        m2 = Maze(0,0,num_columns=num_col, num_rows=num_row, cell_size_x=10, cell_size_y=10)
-        self.assertListEqual(m2._cells, [])
+        with self.assertRaisesRegex(ValueError, "Can not define maze with no rows or columns."):
+            Maze(0,0,num_columns=num_col, num_rows=num_row, cell_size_x=10, cell_size_y=10)
+        
         
     def test_maze_entrance_and_exit(self):
         num_row = 12
@@ -44,6 +45,43 @@ class Tests(unittest.TestCase):
         exit_cell = maze._cells[-1][-1]
         self.assertFalse(exit_cell.has_right_wall)
 
+    def test_break_walls_r(self):
+        num_row = 12
+        num_columns = 16
+        margin = 50
+        screen_width = 800
+        screen_height = 600
+        cell_size_x = (screen_width - (2 * margin)) / num_row
+        cell_size_y = (screen_height - (2 * margin)) / num_columns
+
+        maze = Maze(margin, margin, num_row, num_columns, cell_size_x, cell_size_y, None)
+        # After init Maze, check every cell has at least one broken wall
+        for i in range(len(maze._cells)):
+            for j in range(len(maze._cells[i])):
+                broken_wall = False
+                wall_status = []
+                wall_status.append(maze._cells[i][j].has_bottom_wall)
+                wall_status.append(maze._cells[i][j].has_top_wall)
+                wall_status.append(maze._cells[i][j].has_left_wall)
+                wall_status.append(maze._cells[i][j].has_right_wall)
+                if False in wall_status:
+                    broken_wall = True
+                self.assertTrue(broken_wall)
+
+    def test_reset_cells_visited(self):
+        num_row = 12
+        num_columns = 16
+        margin = 50
+        screen_width = 800
+        screen_height = 600
+        cell_size_x = (screen_width - (2 * margin)) / num_row
+        cell_size_y = (screen_height - (2 * margin)) / num_columns
+
+        maze = Maze(margin, margin, num_row, num_columns, cell_size_x, cell_size_y, None)
+        
+        for col in maze._cells:
+            for cell in col:
+                self.assertFalse(cell._visited)
 
 if __name__ == "__main__":
     unittest.main()
